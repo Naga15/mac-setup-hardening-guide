@@ -209,8 +209,9 @@ System Settings → **Touch ID & Password**: enroll fingerprint(s).
 
 ## 7. Optional extras (not yet done, worth considering)
 
-- **DNS-level ad/tracker blocking:** set DNS to Quad9 (`9.9.9.9`) or
-  NextDNS in System Settings → Wi-Fi → Details → DNS.
+- **DNS-level ad/tracker blocking:** recommended approach is Tailscale global
+  DNS → AdGuard (`94.140.14.14` / `94.140.15.15`), or the same IPs directly in
+  Wi-Fi DNS — see §8m for the full two-layer setup.
 - **Find My Mac:** trade-off — helps recover a stolen laptop but shares
   location with Apple. Your call.
 - **Time Machine backups:** plug in an external drive, System Settings →
@@ -383,6 +384,54 @@ echo 'export OLLAMA_MODELS=/Users/Shared/ollama-models' >> ~/.zprofile
 Quit/reopen Ollama afterwards. Apps in /Applications are already usable by
 all accounts (browsers installed via Homebrew casks land there too).
 
+### 8m. Network-wide ad/tracker blocking
+
+Block ads and trackers the legitimate way — at the DNS layer for every device,
+plus an on-device app for in-page filtering. No account required.
+
+**Layer 1 — DNS filtering via Tailscale + AdGuard DNS (network-wide):**
+
+If you run Tailscale, point its **global nameservers** at AdGuard's public
+ad-blocking resolvers. Every device on the tailnet then filters ads with zero
+per-device config and no signup.
+
+- Tailscale admin → **DNS** tab → Global nameservers:
+  - `94.140.14.14` and `94.140.15.15`  (AdGuard, blocks ads + trackers)
+  - **Override DNS servers: ON**
+  - Leave MagicDNS (`100.100.100.100`) in place — tailnet names keep working
+    and everything else forwards to AdGuard.
+- Verify: `dig +short doubleclick.net` should return `0.0.0.0` (blocked) while
+  a normal site like `example.com` resolves as usual.
+- Why AdGuard rather than Mullvad here: Tailscale's global-nameserver field
+  forwards over **plain** DNS; AdGuard answers on plain IPs, whereas Mullvad is
+  DoH/DoT-only and can't be used as a plain Tailscale nameserver.
+- No Tailscale? Set the same two AdGuard IPs directly in
+  System Settings → Wi-Fi → Details → DNS (per-network, not tailnet-wide).
+
+**Layer 2 — AdGuard for Mac app (on-device, in-page filtering):**
+
+```bash
+brew install --cask adguard
+```
+- Catches what DNS can't: cosmetic ads, element hiding, social widgets.
+- Content Blocking: enable social-widget / Like-Share blocking; leave
+  "online assistants / callback pop-ups" OFF (it also kills legit live-chat).
+- **Privacy protection level: Standard, not High.** High enables aggressive
+  Stealth Mode (strips Referer, blocks third-party cookies/auth) which silently
+  breaks OAuth/SSO logins — a headache for dev work. Raise individual Stealth
+  toggles later, one at a time, if you want more.
+- Runs as a menu-bar app (one-click access). First launch asks to approve a
+  system network extension in System Settings → click Allow.
+
+**A note on the Wi-Fi DNS fallback:** don't hardcode public DNS in your Wi-Fi
+settings on a laptop you travel with — it can break hotel/airport
+**captive-portal** login pages. Leave Wi-Fi DNS automatic; the AdGuard app
+covers on-device blocking regardless of which network you're on.
+
+**NextDNS** is a good alternative if you want per-device stats and custom
+blocklists, but it requires a free account (for a profile ID). AdGuard covers
+the "just block ads, no signup" case, which is why this guide uses it.
+
 ---
 
 ## 9. Progress checklist
@@ -395,7 +444,7 @@ all accounts (browsers installed via Homebrew casks land there too).
 - [ ] CLI tools: git gh node pyenv kubectl kind ripgrep fzf jq wget tree coreutils (§4b)
 - [ ] Apps: Bitwarden Firefox Ghostty LuLu Raycast Rectangle The-Unarchiver VLC (§4b)
 - [ ] Containers: colima + docker CLI + buildx + kind — verified  (§4b)
-- [ ] Tailscale — skipped for now, no use case yet; `brew install --cask tailscale` when needed
+- [ ] Tailscale — install if you want a private mesh + tailnet-wide ad blocking via AdGuard DNS (§8m)
 - [ ] Git identity configured (Your Name / you@example.com, main, )
 - [ ] FileVault ON, encryption finished, recovery key stored
 - [ ] Firewall ON + stealth mode ON
@@ -422,7 +471,7 @@ all accounts (browsers installed via Homebrew casks land there too).
 - [ ] Ollama.app opened, menu bar + CLI installed (§8l)
 - [ ] VS Code: Roo Code + Continue wired to local models (§8l)
 - [ ] Public repo published: github.com/Naga15/mac-local-ai-setup
-- [ ] Encrypted DNS: Wi-Fi → DNS → 9.9.9.9 (Quad9) — cuts ISP visibility
+- [ ] Network-wide ad/tracker blocking: Tailscale global DNS → AdGuard + AdGuard for Mac app (§8m)
 
 ---
 
