@@ -504,3 +504,24 @@ the "just block ads, no signup" case, which is why this guide uses it.
 - [docs/security-faq.md](docs/security-faq.md) — who can see your data (ISP,
   Tailscale, Apple), how password verification really works, quantum vs
   hashes, corporate login internals, local AI privacy.
+
+## Bonus tool: check-apps
+
+[`tools/check-apps.sh`](tools/check-apps.sh) — see what's running, what it
+costs, and what's safe to close:
+
+```bash
+check-apps          # terminal health report (memory pressure, top RAM/CPU)
+check-apps html     # dark-mode HTML dashboard, opens in browser
+check-apps close    # interactive: pick an open app to quit gracefully
+check-apps notify   # silent + macOS notification (for the LaunchAgent below)
+```
+
+Install: copy to `~/Technology/tools/`, `chmod +x`, and alias it in `~/.zshrc`.
+To auto-run 5 minutes after every login (notification with memory status),
+adapt [`tools/com.example.checkapps.plist`](tools/com.example.checkapps.plist)
+into `~/Library/LaunchAgents/` and `launchctl bootstrap gui/$(id -u) <plist>`.
+
+For interactive view-and-close with a full GUI, macOS already ships the tool:
+**Activity Monitor** (Memory tab → select → ⓧ). This script complements it
+with one-command checks, notifications, and Ollama/Colima awareness.
