@@ -114,39 +114,51 @@ echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"
 ```
 
-### 4b. App list (developer-focused)
+### 4b. App list — pick your tiers
+
+**Tier 1 — for everyone:**
 
 ```bash
-# Dev toolchain (CLI)
-brew install git gh node pyenv ripgrep fzf jq wget tree coreutils
+# CLI basics
+brew install ripgrep fzf jq wget tree coreutils bat
 
-# Kubernetes / containers — ✅ INSTALLED  (chose Colima over Docker Desktop
-# for battery: nothing runs until started, no login agents)
-brew install kubernetes-cli kind colima docker docker-compose docker-buildx
-# Usage:  colima start --cpu 2 --memory 4   (before container work)
-#         colima stop                       (when done — zero footprint)
-# Verified: docker build ✅, kind cluster ✅ (k8s v1.36.1, node Ready in 21s)
-
-# Backstage is NOT a brew package — it's scaffolded per-project with Node:
-#   npx @backstage/create-app@latest      (run inside ~/Developer/projects)
-
-# Terminal (VS Code already installed)
-brew install --cask ghostty
-
-# Security / privacy
+# Apps
 brew install --cask bitwarden      # password manager
 brew install --cask lulu           # free outbound firewall — see what apps phone home
-brew install --cask tailscale      # private networking / VPN mesh
-
-# Browsers (privacy-respecting)
-brew install --cask firefox brave-browser
-
-# Daily drivers
+brew install --cask firefox        # privacy browser (+ uBlock Origin & Bitwarden extensions)
 brew install --cask raycast        # launcher (Spotlight replacement)
 brew install --cask rectangle      # window snapping
+brew install --cask maccy          # clipboard history (⌘⇧C) — local-only, open source
+brew install --cask stats          # menu-bar CPU/RAM/network monitor
 brew install --cask the-unarchiver
 brew install --cask vlc
 ```
+
+**Tier 2 — developers:**
+
+```bash
+brew install git gh node pyenv lazygit
+brew install --cask ghostty        # modern terminal
+```
+
+**Tier 3 — Kubernetes / containers (skip unless you do this work):**
+
+```bash
+brew install kubernetes-cli kind colima docker docker-compose docker-buildx
+brew install helm k9s kubectx yq watch go
+# Colima instead of Docker Desktop: nothing runs until `colima start`,
+# no login agents, battery-friendly. kind works first-class against it.
+# Usage:  colima start --cpu 2 --memory 4   → work →   colima stop
+```
+
+**Optional:**
+
+```bash
+brew install --cask tailscale      # private mesh VPN — install when you have a use case
+# Backstage is not a brew package — scaffold per-project with Node:
+#   npx @backstage/create-app@latest
+```
+
 
 Maintenance: `brew update && brew upgrade` periodically; `brew list` to see
 what's installed.
