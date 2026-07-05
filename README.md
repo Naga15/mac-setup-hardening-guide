@@ -420,12 +420,19 @@ per-device config and no signup.
 - No Tailscale? Set the same two AdGuard IPs directly in
   System Settings → Wi-Fi → Details → DNS (per-network, not tailnet-wide).
 
-**Layer 2 — AdGuard for Mac app (on-device, in-page filtering):**
+**Cost note:** Layer 1 above (AdGuard's public DNS resolvers) is **free forever,
+no account**. AdGuard's **for-Mac app** below is a **paid product with a 7-day
+trial** — the two are easy to confuse. You do *not* need the paid app.
 
-```bash
-brew install --cask adguard
-```
-- Catches what DNS can't: cosmetic ads, element hiding, social widgets.
+**Layer 2 — in-page filtering (free option recommended):**
+
+The cosmetic-ad / element-hiding filtering a desktop app does is covered for
+**free** by **uBlock Origin** in Firefox/Brave (see §8f). That's the recommended
+Layer 2 — DNS blocking + uBlock Origin is excellent coverage at zero cost.
+
+The paid **AdGuard for Mac app** (`brew install --cask adguard`) adds one thing
+uBlock can't: filtering ads inside *non-browser native apps*. DNS already
+catches most of those, so most people don't need it. If you do trial/keep it:
 - Content Blocking: enable social-widget / Like-Share blocking; leave
   "online assistants / callback pop-ups" OFF (it also kills legit live-chat).
 - **Privacy protection level: Standard, not High.** High enables aggressive
@@ -434,6 +441,7 @@ brew install --cask adguard
   toggles later, one at a time, if you want more.
 - Runs as a menu-bar app (one-click access). First launch asks to approve a
   system network extension in System Settings → click Allow.
+- Remove with `brew uninstall --cask adguard` if the trial isn't worth paying.
 
 **A note on the Wi-Fi DNS fallback:** don't hardcode public DNS in your Wi-Fi
 settings on a laptop you travel with — it can break hotel/airport
