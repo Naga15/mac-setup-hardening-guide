@@ -441,7 +441,11 @@ catches most of those, so most people don't need it. If you do trial/keep it:
   toggles later, one at a time, if you want more.
 - Runs as a menu-bar app (one-click access). First launch asks to approve a
   system network extension in System Settings → click Allow.
-- Remove with `brew uninstall --cask adguard` if the trial isn't worth paying.
+- Removal gotcha: `brew uninstall --cask adguard` leaves its **root CA** behind
+  in your keychain if you enabled HTTPS filtering. Remove it too:
+  `sudo security delete-certificate -c "Adguard Personal CA" /Library/Keychains/System.keychain`
+  (verify with `security find-certificate -a -c "Adguard"`). Your DNS-layer
+  blocking is unaffected by removing the app.
 
 **A note on the Wi-Fi DNS fallback:** don't hardcode public DNS in your Wi-Fi
 settings on a laptop you travel with — it can break hotel/airport
